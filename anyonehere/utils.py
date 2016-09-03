@@ -10,7 +10,7 @@ MAC_REGEX = '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
 
 def arp_mac_addresses():
     cmd = '''\
-    arp-scan -l | \
+    arp-scan -l --timeout 5 --retry 3 | \
     grep -E '([a-f0-9]{2}:){5}[a-f0-9]{2}' | awk '{print $2}' \
     '''
     logger.info("Running arp scan")
