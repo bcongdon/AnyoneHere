@@ -60,7 +60,11 @@ def check_online():
 @app.route('/')
 def index():
     user_objs = User.query.all()
-    users = [{'name': x.name, 'online': x.online, 'last_seen': x.last_seen}
+    users = [{'name': x.name,
+              'online': x.online,
+              'last_seen': (x.last_seen.strftime('%I:%M%p %Y-%m-%d')
+                            if x.last_seen
+                            else 'Unknown')}
              for x in user_objs]
     return render_template('index.html', users=users)
 
