@@ -16,7 +16,7 @@ def arp_mac_addresses():
     logger.info("Running arp scan")
     raw = os.popen(cmd).read()
     mac_addrs = [x.lower() for x in raw.split()]
-    if not all(map(lambda x: re.match(MAC_REGEX), mac_addrs)):
+    if not all(map(lambda x: re.match(MAC_REGEX, x), mac_addrs)):
         raise RuntimeError('Invalid arp-scan output: {0}'.format(raw))
     else:
         return mac_addrs
