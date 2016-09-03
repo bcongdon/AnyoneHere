@@ -7,7 +7,7 @@ from datetime import datetime
 import json
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///anyonehere.db'
 
 # Init db
 db.init_app(app)
