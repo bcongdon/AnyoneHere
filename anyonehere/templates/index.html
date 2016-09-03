@@ -3,11 +3,12 @@
     {{super()}}
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <meta http-equiv="refresh" content="60">
+    <link rel="stylesheet" href="{{url_for('.static', filename='styles.css')}}">
 {% endblock %}
 {% block title %}Anyone Here?{% endblock %}
 
 {% block content %}
-<div class="container-fluid" style="max-width:80%">
+<div class="container-fluid" style="max-width:768px">
   <h1>Anyone Here? 👀</h1>
   <div class="panel panel-default">
     <!-- Table -->
