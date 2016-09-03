@@ -5,6 +5,9 @@ from .utils import arp_mac_addresses, offline_timedelta
 from .scheduler import scheduler
 from datetime import datetime
 import json
+import logging
+
+logging.basicConfig(level="INFO")
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///anyonehere.db'
