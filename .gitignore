@@ -2,3 +2,4 @@ venv
 config.json
 *.pyc
 test.db
+anyonehere.db
