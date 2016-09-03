@@ -1,8 +1,11 @@
 import os
+import re
 import json
 from datetime import timedelta
 import logging
 logger = logging.getLogger(__file__)
+
+MAC_REGEX = '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
 
 
 def arp_mac_addresses():
@@ -12,7 +15,11 @@ def arp_mac_addresses():
     '''
     logger.info("Running arp scan")
     raw = os.popen(cmd).read()
-    return [x.lower() for x in raw.split()]
+    mac_addrs = [x.lower() for x in raw.split()]
+    if not all(map(lambda x: re.match(MAC_REGEX), mac_addrs)):
+        raise RuntimeError('Invalid arp-scan output: {0}'.format(raw))
+    else:
+        return mac_addrs
 
 
 def offline_timedelta():
