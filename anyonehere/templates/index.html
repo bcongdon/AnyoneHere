@@ -1,0 +1,25 @@
+{% extends "bootstrap/base.html" %}
+{% block styles %}
+    {{super()}}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+{% endblock %}
+{% block title %}Anyone Here?{% endblock %}
+
+{% block content %}
+  <h1>Anyone Here? 👀</h1>
+  <div class="panel panel-default">
+    <!-- Table -->
+    <table class="table">
+        <th>Name</th>
+        <th>Online</th>
+        <th>Last Seen</th>
+    {% for user in users %}
+        <tr>
+            <td>{{ user.name }}</td>
+            <td>{{ user.online }}</td>
+            <td>{{ user.last_seen }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+  </div>
+{% endblock %}

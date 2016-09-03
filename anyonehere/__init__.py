@@ -1,8 +1,11 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_restless import APIManager
+from flask_bootstrap import Bootstrap
+
 from .models import db, User
 from .utils import arp_mac_addresses, offline_timedelta
 from .scheduler import scheduler
+
 from datetime import datetime
 import json
 import logging
@@ -12,8 +15,9 @@ logging.basicConfig(level="INFO")
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///anyonehere.db'
 
-# Init db
+# Initilizations
 db.init_app(app)
+Bootstrap(app)
 
 with app.app_context():
     # Create tables
@@ -52,6 +56,13 @@ def check_online():
                 user.online = False
                 db.session.add(user)
         db.session.commit()
+
+@app.route('/')
+def index():
+    user_objs = User.query.all()
+    users = [{'name': x.name, 'online': x.online, 'last_seen': x.last_seen}
+             for x in user_objs]
+    return render_template('index.html', users=users)
 
 
 if __name__ == '__main__':
