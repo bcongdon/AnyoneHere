@@ -1,0 +1,6 @@
+{
+    "users": {
+        "USER": "MAC ADDRESS",
+    },
+    "minutes_before_offline": 5
+}
