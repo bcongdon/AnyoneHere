@@ -33,3 +33,11 @@
   </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script type="text/javascript" src={{url_for('.static', filename='tinycon.min.js')}}></script>
+<script type="text/javascript">
+Tinycon.setBubble({{ num_online }});
+</script>
+{% endblock %}

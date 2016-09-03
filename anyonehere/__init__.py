@@ -66,7 +66,8 @@ def index():
                             if x.last_seen
                             else 'Unknown')}
              for x in user_objs]
-    return render_template('index.html', users=users)
+    return render_template('index.html', users=users,
+                           num_online=sum(1 for x in users if x['online']))
 
 
 if __name__ == '__main__':
