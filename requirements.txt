@@ -1,4 +1,5 @@
 APScheduler==3.2.0
+arrow==0.8.0
 click==6.6
 dominate==2.2.1
 Flask==0.11.1

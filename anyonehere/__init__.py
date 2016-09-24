@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from flask_restless import APIManager
 from flask_bootstrap import Bootstrap
+import arrow
 
 from .models import db, User
 from .utils import arp_mac_addresses, offline_timedelta
@@ -39,7 +40,7 @@ with app.app_context():
 manager.create_api(User, methods=['GET'])
 
 
-@scheduler.scheduled_job('interval', minutes=1, start_date=datetime.now())
+@scheduler.scheduled_job('interval', minutes=1)
 def check_online():
     macs = arp_mac_addresses()
     with app.app_context():
@@ -48,21 +49,22 @@ def check_online():
             user = User.query.filter_by(mac_address=addr).first()
             if user:
                 user.online = True
-                user.last_seen = datetime.now()
+                user.last_seen = datetime.utcnow()
                 db.session.add(user)
         for user in User.query.filter(User.mac_address.notin_(macs)).all():
             if (not user.last_seen or
-                    datetime.now() - user.last_seen > offline_timedelta()):
+                    datetime.utcnow() - user.last_seen > offline_timedelta()):
                 user.online = False
                 db.session.add(user)
         db.session.commit()
+
 
 @app.route('/')
 def index():
     user_objs = User.query.all()
     users = [{'name': x.name,
               'online': x.online,
-              'last_seen': (x.last_seen.strftime('%I:%M%p %Y-%m-%d')
+              'last_seen': (arrow.get(x.last_seen).humanize()
                             if x.last_seen
                             else 'Unknown')}
              for x in user_objs]
