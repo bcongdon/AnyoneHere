@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from flask_restless import APIManager
 from flask_bootstrap import Bootstrap
+from flask_socketio import SocketIO, emit
 import arrow
 
 from .models import db, User
@@ -15,6 +16,7 @@ logging.basicConfig(level="INFO")
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///anyonehere.db'
+socketio = SocketIO(app)
 
 # Initilizations
 db.init_app(app)
@@ -57,10 +59,15 @@ def check_online():
                 user.online = False
                 db.session.add(user)
         db.session.commit()
+    emit_user_data()
 
 
-@app.route('/')
-def index():
+@socketio.on('request_user_data')
+def handle_request_user_data(event):
+    emit_user_data()
+
+
+def get_user_data():
     user_objs = User.query.all()
     users = [{'name': x.name,
               'online': x.online,
@@ -68,9 +75,23 @@ def index():
                             if x.last_seen
                             else 'Unknown')}
              for x in user_objs]
+    return users
+
+
+def emit_user_data():
+    emit('user_data', get_user_data(), json=True)
+
+
+@app.route('/')
+def index():
+    users = get_user_data()
     return render_template('index.html', users=users,
                            num_online=sum(1 for x in users if x['online']))
 
+@app.route('/socket_test')
+def socket():
+    return render_template('socket_test.html')
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app)
