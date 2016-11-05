@@ -88,10 +88,6 @@ def index():
     return render_template('index.html', users=users,
                            num_online=sum(1 for x in users if x['online']))
 
-@app.route('/socket_test')
-def socket():
-    return render_template('socket_test.html')
-
 
 if __name__ == '__main__':
     socketio.run(app)
