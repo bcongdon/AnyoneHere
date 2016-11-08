@@ -68,13 +68,14 @@ def handle_request_user_data(event):
 
 
 def get_user_data():
-    user_objs = User.query.all()
-    users = [{'name': x.name,
-              'online': x.online,
-              'last_seen': (arrow.get(x.last_seen).humanize()
-                            if x.last_seen
-                            else 'Unknown')}
-             for x in user_objs]
+    with app.app_context():
+        user_objs = User.query.all()
+        users = [{'name': x.name,
+                  'online': x.online,
+                  'last_seen': (arrow.get(x.last_seen).humanize()
+                                if x.last_seen
+                                else 'Unknown')}
+                 for x in user_objs]
     return users
 
 
