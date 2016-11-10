@@ -80,7 +80,7 @@ def get_user_data():
 
 
 def emit_user_data():
-    emit('user_data', get_user_data(), json=True)
+    socketio.emit('user_data', get_user_data(), json=True)
 
 
 @app.route('/')
