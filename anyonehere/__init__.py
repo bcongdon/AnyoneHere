@@ -4,7 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_socketio import SocketIO, emit
 import arrow
 
-from .models import db, User
+from .models import db, User, Measurement
 from .utils import arp_mac_addresses, offline_timedelta
 from .scheduler import scheduler
 
@@ -13,9 +13,11 @@ import json
 import logging
 
 logging.basicConfig(level="INFO")
+log = logging.getLogger('anyonehere')
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///anyonehere.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 socketio = SocketIO(app)
 
 # Initilizations
@@ -51,13 +53,19 @@ def check_online():
             user = User.query.filter_by(mac_address=addr).first()
             if user:
                 user.online = True
-                user.last_seen = datetime.utcnow()
+                measurement = Measurement(time=datetime.utcnow(),
+                                          user_id=user.id)
                 db.session.add(user)
+                db.session.add(measurement)
+                log.info('Adding measurement for user {}'.format(user.id))
+
         for user in User.query.filter(User.mac_address.notin_(macs)).all():
             if (not user.last_seen or
                     datetime.utcnow() - user.last_seen > offline_timedelta()):
                 user.online = False
                 db.session.add(user)
+                log.info('Marking user {} as offline'.format(user.id))
+
         db.session.commit()
     emit_user_data()
 
