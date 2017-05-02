@@ -26,3 +26,7 @@ def offline_timedelta():
     with open('./config.json') as f:
         minutes = json.load(f).get('minutes_before_offline', 5)
     return timedelta(minutes=minutes)
+
+
+def discard_old_timedelta():
+    return timedelta(days=365)

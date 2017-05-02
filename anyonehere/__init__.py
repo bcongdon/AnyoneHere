@@ -5,7 +5,7 @@ from flask_socketio import SocketIO, emit
 import arrow
 
 from .models import db, User, Measurement
-from .utils import arp_mac_addresses, offline_timedelta
+from .utils import arp_mac_addresses, offline_timedelta, discard_old_timedelta
 from .scheduler import scheduler
 
 from datetime import datetime
@@ -59,7 +59,9 @@ def check_online():
                 db.session.add(measurement)
                 log.info('Adding measurement for user {}'.format(user.id))
 
-        for user in User.query.filter(User.mac_address.notin_(macs)).all():
+        should_be_offline = (User.query.filter(User.mac_address.notin_(macs))
+                             .filter(User.online).all())
+        for user in should_be_offline:
             if (not user.last_seen or
                     datetime.utcnow() - user.last_seen > offline_timedelta()):
                 user.online = False
@@ -68,6 +70,16 @@ def check_online():
 
         db.session.commit()
     emit_user_data()
+
+
+@scheduler.scheduled_job('interval', days=1)
+def remove_old_data():
+    cutoff = datetime.utcnow() - discard_old_timedelta()
+    old_measurements = Measurement.query.filter(Measurement.time < cutoff)
+    for m in old_measurements:
+        log.info('Deleting old measurement {}'.format(m.id))
+        db.session.delete(m)
+    db.session.commit()
 
 
 @socketio.on('request_user_data')
