@@ -105,9 +105,7 @@ def emit_user_data():
 @app.route('/')
 def index():
     users = get_user_data()
-    return render_template('react.html')
-    # return render_template('index.html', users=users,
-    #                        num_online=sum(1 for x in users if x['online']))
+    return render_template('index.html')
 
 
 if __name__ == '__main__':
