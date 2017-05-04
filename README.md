@@ -20,11 +20,16 @@
 	```
 
 3. Edit `config.json` file to contain user names and MAC addresses.
-4. Run AnyoneHere.
+4. Build the front end.
+	```
+	npm install
+	npm run build
+	```
+5. Run AnyoneHere.
 
 	```
 	python run.py
 	```
 	
-5. Connect to AnyoneHere at `http://localhost:5000`.
+6. Connect to AnyoneHere at `http://localhost:5000`.
 	* You can access online user data programmatically by sending a `GET` request to `/api/user`

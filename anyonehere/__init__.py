@@ -40,8 +40,7 @@ with app.app_context():
         db.session.commit()
 
     manager = APIManager(app, flask_sqlalchemy_db=db)
-
-manager.create_api(User, methods=['GET'])
+    manager.create_api(User, methods=['GET'])
 
 
 @scheduler.scheduled_job('interval', minutes=1)
@@ -106,8 +105,7 @@ def emit_user_data():
 @app.route('/')
 def index():
     users = get_user_data()
-    return render_template('index.html', users=users,
-                           num_online=sum(1 for x in users if x['online']))
+    return render_template('index.html')
 
 
 if __name__ == '__main__':
