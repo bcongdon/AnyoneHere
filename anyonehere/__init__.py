@@ -40,8 +40,7 @@ with app.app_context():
         db.session.commit()
 
     manager = APIManager(app, flask_sqlalchemy_db=db)
-
-manager.create_api(User, methods=['GET'])
+    manager.create_api(User, methods=['GET'])
 
 
 @scheduler.scheduled_job('interval', minutes=1)

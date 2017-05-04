@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 
 class UserEntry extends Component {
   getStatus() {
@@ -12,12 +13,19 @@ class UserEntry extends Component {
     )
   }
 
+  getLastSeen() {
+    if(!this.props.lastSeen) {
+      return "Unknown";
+    }
+    return moment(this.props.lastSeen).fromNow();
+  }
+
   render() {
     return (
       <tr>
         <td>{this.props.name}</td>
         <td>{this.getStatus()}</td>
-        <td>{this.props.lastSeen}</td>
+        <td>{this.getLastSeen()}</td>
       </tr>
     );
   }

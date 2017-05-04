@@ -1,17 +1,41 @@
 import React, { Component } from 'react';
 import UserEntry from './UserEntry';
 import map from 'lodash';
+import $ from 'jquery';
+import Tinycon from 'tinycon';
 
 class UserTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: [{
-        name: "foo",
-        lastSeen: "bar",
-        online: true
-      }]
+      users: []
     }
+    this.updateUsers();
+  }
+
+  componentDidMount() {
+    setInterval(this.updateUsers.bind(this), 60 * 1000);
+  }
+
+  updateUsers() {
+    var self = this;
+    $.getJSON('/api/user', (data) => {
+      var num_online = 0;
+      var users = data.objects.map((u) => {
+        if(u.online) {
+          num_online++;
+        }
+        return {
+          name: u.name,
+          lastSeen: u.last_seen,
+          online: u.online
+        };
+      });
+      Tinycon.setBubble(num_online);
+      this.setState({
+        users: users
+      });
+    });
   }
 
   getHeader() {

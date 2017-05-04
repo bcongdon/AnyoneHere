@@ -9,7 +9,9 @@ class App extends Component {
         <div className="App-header">
           <h1>Anyone Here? 👀</h1>
         </div>
-        <UserTable />
+        <div className="panel panel-default">
+          <UserTable />
+        </div>
       </div>
     );
   }
