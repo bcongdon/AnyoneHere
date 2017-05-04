@@ -4,3 +4,4 @@ config.json
 test.db
 anyonehere.db
 .env
+node_modules
