@@ -17,7 +17,7 @@ class UserEntry extends Component {
     if(!this.props.lastSeen) {
       return "Unknown";
     }
-    return moment(this.props.lastSeen).fromNow();
+    return moment.utc(this.props.lastSeen).local().fromNow();
   }
 
   render() {
