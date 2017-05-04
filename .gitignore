@@ -5,3 +5,4 @@ test.db
 anyonehere.db
 .env
 node_modules
+bundle.js

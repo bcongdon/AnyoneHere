@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import UserTable from './UserTable'
+import UserTable from './UserTable';
+import css from './App.css';
 
 class App extends Component {
   render() {
