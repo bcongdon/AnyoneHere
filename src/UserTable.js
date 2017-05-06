@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
+import Collapse from 'rc-collapse';
+const Panel = Collapse.Panel;
 import UserEntry from './UserEntry';
+import UserChart from './UserChart';
 import map from 'lodash';
 import $ from 'jquery';
 import Tinycon from 'tinycon';
+require('rc-collapse/assets/index.css');
+
 
 class UserTable extends Component {
   constructor(props) {
@@ -38,28 +43,24 @@ class UserTable extends Component {
     });
   }
 
-  getHeader() {
-    return (
-      <tr>
-        <th>Name</th>
-        <th>Online</th>
-        <th>Last Seen</th>
-      </tr>
-    )
-  }
-
   getUsers() {
     return this.state.users.map((user, idx) => {
-      return (<UserEntry name={user.name} lastSeen={user.lastSeen} online={user.online} key={idx}/>)
+      var header = (
+        <UserEntry name={user.name} lastSeen={user.lastSeen} online={user.online} key={idx}/>
+      );
+      return (
+        <Panel header={header} showArrow={false} key={idx+1}>
+          <UserChart />
+        </Panel>
+      );
     });
   }
 
   render() {
     return (
-      <table className="table">
-        <thead>{this.getHeader()}</thead>
-        <tbody>{this.getUsers()}</tbody>
-      </table>
+      <Collapse accordion={true} destroyInactivePanel={true}>
+        {this.getUsers()}
+      </Collapse>
     );
   }
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import css from './UserEntry.css'
 
 class UserEntry extends Component {
   getStatus() {
@@ -22,11 +23,11 @@ class UserEntry extends Component {
 
   render() {
     return (
-      <tr>
-        <td>{this.props.name}</td>
-        <td>{this.getStatus()}</td>
-        <td>{this.getLastSeen()}</td>
-      </tr>
+      <div className="UserEntry">
+        <div className="UserEntry-status">{this.getStatus()}</div>
+        <div className="UserEntry-name">{this.props.name}</div>
+        <div className="UserEntry-last-seen">{this.getLastSeen()}</div>
+      </div>
     );
   }
 }

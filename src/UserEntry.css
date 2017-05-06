@@ -1,0 +1,18 @@
+.UserEntry-name {
+    display: inline-block;
+    font-size: 16px;
+    color: #515151;
+}
+
+.UserEntry-status {
+    display: inline-block;
+    text-indent: 0px;
+    padding-right: 12px;
+}
+
+.UserEntry-last-seen {
+    display: inline-block;
+    float: right;
+    padding-right: 20px;
+    font-size: 11px;
+}
