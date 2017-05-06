@@ -1,7 +1,9 @@
 # AnyoneHere?
 > :eyes: See who's home with a simple Flask API
 
-![StatusPage](img/screengrab.png)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](https://github.com/feross/standard)
+
+![StatusPage](img/screengrab.png) 
 
 ## Installation
 

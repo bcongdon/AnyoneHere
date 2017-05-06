@@ -1,79 +1,78 @@
-import React, { Component } from 'react';
-import Collapse from 'rc-collapse';
-const Panel = Collapse.Panel;
-import UserEntry from './UserEntry';
-import UserChart from './UserChart';
-import { groupBy, map } from 'lodash';
-import $ from 'jquery';
-import Tinycon from 'tinycon';
-require('rc-collapse/assets/index.css');
-
+import React, { Component } from 'react'
+import Collapse from 'rc-collapse'
+import UserEntry from './UserEntry'
+import UserChart from './UserChart'
+import { groupBy } from 'lodash'
+import $ from 'jquery'
+import Tinycon from 'tinycon'
+const Panel = Collapse.Panel
+require('rc-collapse/assets/index.css')
 
 class UserTable extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       users: [],
       measurements: {}
     }
-    this.updateUsers();
-    this.updateMeasurements();
+    this.updateUsers()
+    this.updateMeasurements()
   }
 
   componentDidMount() {
-    setInterval(this.updateUsers.bind(this), 60 * 1000);
+    setInterval(this.updateUsers.bind(this), 60 * 1000)
   }
 
   updateUsers() {
     $.getJSON('/api/user', (data) => {
-      var num_online = 0;
+      var numOnline = 0
       var users = data.objects.map((u) => {
-        if(u.online) {
-          num_online++;
+        if (u.online) {
+          numOnline++
         }
         return {
           name: u.name,
           lastSeen: u.last_seen,
           online: u.online,
           id: u.id
-        };
-      });
-      Tinycon.setBubble(num_online);
+        }
+      })
+      Tinycon.setBubble(numOnline)
       this.setState({
         users: users
-      });
-    });
+      })
+    })
   }
 
   updateMeasurements() {
     $.getJSON('/api/measurement', (data) => {
-      var measurements = groupBy(data.objects, 'user_id');
+      var measurements = groupBy(data.objects, 'user_id')
       this.setState({
         measurements: measurements
-      });
-    });
+      })
+    })
   }
 
   getUsers() {
     return this.state.users.map((user, idx) => {
       var header = (
-        <UserEntry name={user.name} lastSeen={user.lastSeen} online={user.online} key={idx}/>
-      );
+        <UserEntry name={user.name} lastSeen={user.lastSeen} online={user.online} key={idx} />
+      )
       return (
-        <Panel header={header} showArrow={false} key={idx+1}>
+        <Panel header={header} showArrow={false} key={idx + 1} >
           <UserChart measurements={this.state.measurements[user.id] || []} />
         </Panel>
-      );
-    });
+      )
+    })
   }
 
   render() {
     return (
-      <Collapse accordion={true} destroyInactivePanel={true}>
+      <Collapse accordion destroyInactivePanel>
         {this.getUsers()}
       </Collapse>
-    );
+    )
   }
 }
 
-export default UserTable;
+export default UserTable
