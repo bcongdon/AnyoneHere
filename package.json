@@ -21,11 +21,17 @@
     "babel-preset-react": "^6.24.1",
     "babelify": "^7.3.0",
     "css-loader": "^0.28.1",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-node": "^4.2.2",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
     "style-loader": "^0.17.0",
     "webpack": "^2.5.0"
   },
   "scripts": {
     "start": "webpack --watch",
-    "build": "webpack --optimize-minimize --define process.env.NODE_ENV=\"'production'\""
+    "build": "webpack --optimize-minimize --define process.env.NODE_ENV=\"'production'\"",
+    "lint": "eslint src/*.js"
   }
 }
