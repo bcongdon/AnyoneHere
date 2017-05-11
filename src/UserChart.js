@@ -2,10 +2,10 @@ import { Component } from 'react'
 import * as d3 from 'd3'
 import Faux from 'react-faux-dom'
 import moment from 'moment'
-import { chain, groupBy } from 'lodash'
+import { chain, reduce, map } from 'lodash'
 
-const margin = {top: 10, right: 10, bottom: 10, left: 100}
-const width = 960 - margin.left - margin.right
+const margin = {top: 25, right: 10, bottom: 10, left: 100}
+const width = 600 - margin.left - margin.right
 const height = 405 - margin.top - margin.bottom
 const padding = 3
 const xLabelHeight = 30
@@ -26,8 +26,22 @@ class UserChart extends Component {
     .map((o) => { return moment.utc(o.time).local() })
     .groupBy((m) => { return m.day() })
     .mapValues((day) => {
-      return groupBy(day, (m) => { return m.hour() })
+      return reduce(day, (result, time) => {
+        var hour = time.hour()
+        result[hour] = result[hour] ? result[hour] + 1 : 1
+        return result
+      }, {})
     })
+    .map((hours, day) => {
+      return map(hours, (c, h) => {
+        return {
+          day: Number(day),
+          hour: Number(h),
+          count: c
+        }
+      })
+    })
+    .flatten()
     .value()
   }
 
@@ -68,16 +82,16 @@ class UserChart extends Component {
     .call(yAxis)
 
     var rScale = d3.scaleSqrt()
-    .domain([0, 10])
-    .range([5, 30])
+    .domain([0, 50])
+    .range([0, 15])
 
     chart.selectAll('circle')
-    .data(test_data)
+    .data(data)
     .enter()
     .append('circle')
-    .attr('cx', d => x(d.time))
-    .attr('cy', d => y(d.time))
-    .attr('r', d => rScale(d.value))
+    .attr('cx', d => x(d.hour))
+    .attr('cy', d => y(d.day))
+    .attr('r', d => rScale(d.count))
     .style('fill', '#333')
 
 
