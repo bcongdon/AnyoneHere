@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import moment from 'moment'
 import './UserEntry.css'
 
@@ -31,6 +32,12 @@ class UserEntry extends Component {
       </div>
     )
   }
+}
+
+UserEntry.propTypes = {
+  online: PropTypes.bool,
+  lastSeen: PropTypes.string,
+  name: PropTypes.string.isRequired
 }
 
 export default UserEntry

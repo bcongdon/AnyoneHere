@@ -1,4 +1,5 @@
 import { Component } from 'react'
+import PropTypes from 'prop-types'
 import * as d3 from 'd3'
 import Faux from 'react-faux-dom'
 import moment from 'moment'
@@ -96,6 +97,10 @@ class UserChart extends Component {
 
     return elem.toReact()
   }
+}
+
+UserChart.propTypes = {
+  measurements: PropTypes.array.isRequired
 }
 
 export default UserChart
