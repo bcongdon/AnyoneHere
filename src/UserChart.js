@@ -4,20 +4,17 @@ import Faux from 'react-faux-dom'
 import moment from 'moment'
 import { chain, reduce, map } from 'lodash'
 
-const margin = {top: 25, right: 10, bottom: 10, left: 100}
-const width = 600 - margin.left - margin.right
+const margin = {top: 15, right: 40, bottom: 20, left: 70}
+const width = 730 - margin.left - margin.right
 const height = 405 - margin.top - margin.bottom
-const padding = 3
-const xLabelHeight = 30
-const yLabelWidth = 80
-const borderWidth = 3
-const duration = 500
+const maxRadius = 15
+const xAxisOffset = {left: 20, bottom: 10}
 
 const xLabels = ['12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a',
-                 '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p',
-                 '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p']
+  '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p',
+  '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p']
 const yLabels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
-                 'Thursday', 'Friday', 'Saturday']
+  'Thursday', 'Friday', 'Saturday']
 
 class UserChart extends Component {
   getMeasurementSummary() {
@@ -46,9 +43,12 @@ class UserChart extends Component {
   }
 
   render() {
-    var data = this.getMeasurementSummary()
-    var elem = Faux.createElement('div')
-    var chart = d3.select(elem).append('svg')
+    const data = this.getMeasurementSummary()
+    const maxCount = reduce(data, (curr, d) => {
+      return curr > d.count ? curr : d.count
+    }, 0)
+    const elem = Faux.createElement('div')
+    const chart = d3.select(elem).append('svg')
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
@@ -56,11 +56,11 @@ class UserChart extends Component {
 
     const x = d3.scaleLinear()
     .domain([0, 23])
-    .range([0, width])
+    .range([0, width - margin.right])
 
     const y = d3.scaleLinear()
     .domain([0, 6])
-    .range([0, height])
+    .range([0, height - margin.bottom])
 
     const xAxis = d3.axisBottom()
     .scale(x)
@@ -74,26 +74,25 @@ class UserChart extends Component {
 
     chart.append('g')
     .attr('class', 'x axis')
-    .attr('transform', `translate(0, ${height - 25})`)
+    .attr('transform', `translate(${xAxisOffset.left}, ${height - xAxisOffset.bottom})`)
     .call(xAxis)
 
     chart.append('g')
     .attr('class', 'y axis')
     .call(yAxis)
 
-    var rScale = d3.scaleSqrt()
-    .domain([0, 50])
-    .range([0, 15])
+    const rScale = d3.scaleSqrt()
+    .domain([0, maxCount])
+    .range([0, maxRadius])
 
     chart.selectAll('circle')
     .data(data)
     .enter()
     .append('circle')
-    .attr('cx', d => x(d.hour))
+    .attr('cx', d => x(d.hour) + xAxisOffset.left)
     .attr('cy', d => y(d.day))
     .attr('r', d => rScale(d.count))
     .style('fill', '#333')
-
 
     return elem.toReact()
   }
