@@ -1,15 +1,16 @@
-import { Component } from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import * as d3 from 'd3'
 import Faux from 'react-faux-dom'
 import moment from 'moment'
+import reactMixin from 'react-mixin'
 import { chain, reduce, map } from 'lodash'
 
 const margin = {top: 15, right: 40, bottom: 20, left: 70}
 const width = 730 - margin.left - margin.right
 const height = 405 - margin.top - margin.bottom
 const maxRadius = 15
-const xAxisOffset = {left: 20, bottom: 10}
+const xAxisOffset = {left: 20, bottom: 5}
 
 const xLabels = ['12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a',
   '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p',
@@ -18,6 +19,14 @@ const yLabels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday',
   'Thursday', 'Friday', 'Saturday']
 
 class UserChart extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      chart: 'Loading...'
+    }
+  }
+
   getMeasurementSummary() {
     return chain(this.props.measurements)
     .filter('time')
@@ -43,7 +52,7 @@ class UserChart extends Component {
     .value()
   }
 
-  render() {
+  componentDidMount() {
     const data = this.getMeasurementSummary()
     const maxCount = reduce(data, (curr, d) => {
       return curr > d.count ? curr : d.count
@@ -95,7 +104,17 @@ class UserChart extends Component {
     .attr('r', d => rScale(d.count))
     .style('fill', '#333')
 
-    return elem.toReact()
+    this.setState({
+      chart: elem.toReact()
+    })
+  }
+
+  render() {
+    return (
+      <div className='d3'>
+        {this.state.chart}
+      </div>
+    )
   }
 }
 
