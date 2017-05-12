@@ -40,7 +40,8 @@ with app.app_context():
         db.session.commit()
 
     manager = APIManager(app, flask_sqlalchemy_db=db)
-    manager.create_api(User, methods=['GET'])
+    manager.create_api(User, methods=['GET'],
+                       include_methods=['online'])
     manager.create_api(Measurement, methods=['GET'], results_per_page=0)
 
 
@@ -52,21 +53,11 @@ def check_online():
         for addr in macs:
             user = User.query.filter_by(mac_address=addr).first()
             if user:
-                user.online = True
                 measurement = Measurement(time=datetime.utcnow(),
                                           user_id=user.id)
                 db.session.add(user)
                 db.session.add(measurement)
                 log.info('Adding measurement for user {}'.format(user.id))
-
-        should_be_offline = (User.query.filter(User.mac_address.notin_(macs))
-                             .filter(User.online).all())
-        for user in should_be_offline:
-            if (not user.last_seen or
-                    datetime.utcnow() - user.last_seen > offline_timedelta()):
-                user.online = False
-                db.session.add(user)
-                log.info('Marking user {} as offline'.format(user.id))
 
         db.session.commit()
     emit_user_data()
@@ -91,7 +82,7 @@ def get_user_data():
     with app.app_context():
         user_objs = User.query.all()
         users = [{'name': x.name,
-                  'online': x.online,
+                  'online': x.last_seen > datetime.utcnow() - offline_timedelta(),
                   'last_seen': (arrow.get(x.last_seen).humanize()
                                 if x.last_seen
                                 else 'Unknown')}
@@ -105,7 +96,6 @@ def emit_user_data():
 
 @app.route('/')
 def index():
-    users = get_user_data()
     return render_template('index.html')
 
 
