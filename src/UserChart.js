@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import * as d3 from 'd3'
 import Faux from 'react-faux-dom'
 import moment from 'moment'
-import reactMixin from 'react-mixin'
 import { chain, reduce, map } from 'lodash'
 
 const margin = {top: 15, right: 40, bottom: 20, left: 70}
