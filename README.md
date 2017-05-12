@@ -1,9 +1,16 @@
 # AnyoneHere?
-> :eyes: See who's home with a simple Flask API
+> :eyes: See who's around with a simple Flask API
 
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](https://github.com/feross/standard)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
 
-![StatusPage](img/screengrab.png) 
+AnyoneHere gives you a snapshot of who's around.
+
+![ScreenGrab](img/screengrab.png)
+
+You can also look at a punchcard-style view of historical data.
+
+![ScreenGrabPunchcard](img/screengrab-punchcard.png)
 
 ## Installation
 
