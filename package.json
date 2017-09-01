@@ -33,8 +33,8 @@
     "webpack": "^2.5.0"
   },
   "scripts": {
-    "start": "webpack --watch",
-    "build": "webpack --optimize-minimize --define process.env.NODE_ENV=\"'production'\"",
+    "start": "webpack --watch --progress",
+    "build": "webpack --optimize-minimize --define process.env.NODE_ENV=\"'production'\" --progress",
     "lint": "eslint src/*.js"
   }
 }
