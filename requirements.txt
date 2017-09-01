@@ -1,3 +1,4 @@
+aniso8601==1.2.1
 appdirs==1.4.3
 APScheduler==3.2.0
 arrow==0.8.0
@@ -5,8 +6,7 @@ click==6.7
 dominate==2.2.1
 Flask==0.12.1
 Flask-Bootstrap==3.3.6.0
-Flask-Restless==0.17.0
-Flask-SocketIO==2.7.2
+Flask-RESTful==0.3.6
 Flask-SQLAlchemy==2.1
 funcsigs==1.0.2
 futures==3.1.1
@@ -20,7 +20,6 @@ pyparsing==2.2.0
 python-dateutil==2.6.0
 python-engineio==1.0.3
 python-mimeparse==1.6.0
-python-socketio==1.6.0
 pytz==2016.6.1
 six==1.10.0
 SQLAlchemy==1.1.9

@@ -14,6 +14,13 @@ class Measurement(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     time = db.Column(db.DateTime)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'time': self.time
+        }
+
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -28,13 +35,13 @@ class User(db.Model):
     @property
     def online(self):
         cutoff = datetime.utcnow() - offline_timedelta()
-        return self.last_seen > cutoff
+        return self.last_seen and self.last_seen > cutoff
 
-
-def user_serializer(instance):
-    return {
-        'id': instance.id,
-        'name': instance.name,
-        'last_seen': instance.last_seen,
-        'online': instance.online
-    }
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'mac_address': self.mac_address,
+            'last_seen': self.last_seen,
+            'online': self.online
+        }

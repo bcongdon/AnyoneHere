@@ -26,7 +26,7 @@ class UserTable extends Component {
   updateUsers() {
     $.getJSON('/api/user', (data) => {
       var numOnline = 0
-      var users = data.objects.map((u) => {
+      var users = data.users.map((u) => {
         if (u.online) {
           numOnline++
         }
@@ -46,7 +46,7 @@ class UserTable extends Component {
 
   updateMeasurements() {
     $.getJSON('/api/measurement', (data) => {
-      var measurements = groupBy(data.objects, 'user_id')
+      var measurements = groupBy(data.measurements, 'user_id')
       this.setState({
         measurements: measurements
       })

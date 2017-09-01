@@ -1,7 +1,5 @@
-from flask import Flask, render_template
-from flask_restless import APIManager
+from flask import Flask, render_template, jsonify
 from flask_bootstrap import Bootstrap
-from flask_socketio import SocketIO, emit
 import arrow
 
 from .models import db, User, Measurement
@@ -18,7 +16,6 @@ log = logging.getLogger('anyonehere')
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///anyonehere.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-socketio = SocketIO(app)
 
 # Initilizations
 db.init_app(app)
@@ -39,10 +36,21 @@ with app.app_context():
         db.session.add(user)
         db.session.commit()
 
-    manager = APIManager(app, flask_sqlalchemy_db=db)
-    manager.create_api(User, methods=['GET'],
-                       include_methods=['online'])
-    manager.create_api(Measurement, methods=['GET'], results_per_page=0)
+
+@app.route('/api/user')
+def get_user():
+    users = User.query.all()
+    return jsonify({
+        'users': [u.to_dict() for u in users]
+    })
+
+
+@app.route('/api/measurement')
+def get_user_stats():
+    measurements = Measurement.query.all()
+    return jsonify({
+        'measurements': [m.to_dict() for m in measurements]
+    })
 
 
 @scheduler.scheduled_job('interval', minutes=1)
@@ -60,38 +68,19 @@ def check_online():
                 log.info('Adding measurement for user {}'.format(user.id))
 
         db.session.commit()
-    emit_user_data()
 
 
 @scheduler.scheduled_job('interval', days=1)
 def remove_old_data():
+    log.info("Checking for old data")
     cutoff = datetime.utcnow() - discard_old_timedelta()
-    old_measurements = Measurement.query.filter(Measurement.time < cutoff)
+    old_measurements = (
+        Measurement.query.filter(Measurement.time < cutoff).all()
+    )
     for m in old_measurements:
         log.info('Deleting old measurement {}'.format(m.id))
         db.session.delete(m)
     db.session.commit()
-
-
-@socketio.on('request_user_data')
-def handle_request_user_data(event):
-    emit_user_data()
-
-
-def get_user_data():
-    with app.app_context():
-        user_objs = User.query.all()
-        users = [{'name': x.name,
-                  'online': x.last_seen > datetime.utcnow() - offline_timedelta(),
-                  'last_seen': (arrow.get(x.last_seen).humanize()
-                                if x.last_seen
-                                else 'Unknown')}
-                 for x in user_objs]
-    return users
-
-
-def emit_user_data():
-    socketio.emit('user_data', get_user_data(), json=True)
 
 
 @app.route('/')
@@ -99,5 +88,9 @@ def index():
     return render_template('index.html')
 
 
+@app.before_first_request
+def setup():
+    remove_old_data()
+
 if __name__ == '__main__':
-    socketio.run(app)
+    app.run()
