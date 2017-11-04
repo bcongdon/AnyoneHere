@@ -1,3 +1,7 @@
 .App-container {
     max-width: 768px;
 }
+
+.rc-collapse-content-box {
+    text-align: center;
+}

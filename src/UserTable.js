@@ -5,6 +5,8 @@ import UserChart from './UserChart'
 import { groupBy } from 'lodash'
 import $ from 'jquery'
 import Tinycon from 'tinycon'
+import Loader from 'halogen/ClipLoader'
+
 const Panel = Collapse.Panel
 require('rc-collapse/assets/index.css')
 
@@ -13,7 +15,8 @@ class UserTable extends Component {
     super(props)
     this.state = {
       users: [],
-      measurements: {}
+      measurements: {},
+      measurementsLoaded: false
     }
     this.updateUsers()
     this.updateMeasurements()
@@ -48,7 +51,8 @@ class UserTable extends Component {
     $.getJSON('/api/measurement', (data) => {
       var measurements = groupBy(data.measurements, 'user_id')
       this.setState({
-        measurements: measurements
+        measurements: measurements,
+        measurementsLoaded: true
       })
     })
   }
@@ -58,9 +62,16 @@ class UserTable extends Component {
       var header = (
         <UserEntry name={user.name} lastSeen={user.lastSeen} online={user.online} key={idx} />
       )
+
+      var userChart = (<UserChart measurements={this.state.measurements[user.id] || []} />);
+
+      if(!this.state.measurementsLoaded) {
+        userChart = (<Loader color="#000000" size="48px" margin="24px"/>);
+      }
+
       return (
         <Panel header={header} showArrow={false} key={idx + 1} >
-          <UserChart measurements={this.state.measurements[user.id] || []} />
+          {userChart}    
         </Panel>
       )
     })
@@ -68,7 +79,7 @@ class UserTable extends Component {
 
   render() {
     return (
-      <Collapse accordion destroyInactivePanel>
+      <Collapse accordion>
         {this.getUsers()}
       </Collapse>
     )
