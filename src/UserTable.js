@@ -63,15 +63,15 @@ class UserTable extends Component {
         <UserEntry name={user.name} lastSeen={user.lastSeen} online={user.online} key={idx} />
       )
 
-      var userChart = (<UserChart measurements={this.state.measurements[user.id] || []} />);
+      var userChart = (<UserChart measurements={this.state.measurements[user.id] || []} />)
 
-      if(!this.state.measurementsLoaded) {
-        userChart = (<Loader color="#000000" size="48px" margin="24px"/>);
+      if (!this.state.measurementsLoaded) {
+        userChart = (<Loader color='#000000' size='48px' margin='24px' />)
       }
 
       return (
         <Panel header={header} showArrow={false} key={idx + 1} >
-          {userChart}    
+          {userChart}
         </Panel>
       )
     })

@@ -28,27 +28,27 @@ class UserChart extends Component {
 
   getMeasurementSummary() {
     return chain(this.props.measurements)
-    .filter('time')
-    .map((o) => { return moment.utc(o.time).local() })
-    .groupBy((m) => { return m.day() })
-    .mapValues((day) => {
-      return reduce(day, (result, time) => {
-        var hour = time.hour()
-        result[hour] = result[hour] ? result[hour] + 1 : 1
-        return result
-      }, {})
-    })
-    .map((hours, day) => {
-      return map(hours, (c, h) => {
-        return {
-          day: Number(day),
-          hour: Number(h),
-          count: c
-        }
+      .filter('time')
+      .map((o) => { return moment.utc(o.time).local() })
+      .groupBy((m) => { return m.day() })
+      .mapValues((day) => {
+        return reduce(day, (result, time) => {
+          var hour = time.hour()
+          result[hour] = result[hour] ? result[hour] + 1 : 1
+          return result
+        }, {})
       })
-    })
-    .flatten()
-    .value()
+      .map((hours, day) => {
+        return map(hours, (c, h) => {
+          return {
+            day: Number(day),
+            hour: Number(h),
+            count: c
+          }
+        })
+      })
+      .flatten()
+      .value()
   }
 
   componentDidMount() {
@@ -58,50 +58,50 @@ class UserChart extends Component {
     }, 0)
     const elem = Faux.createElement('div')
     const chart = d3.select(elem).append('svg')
-    .attr('width', width + margin.left + margin.right)
-    .attr('height', height + margin.top + margin.bottom)
-    .append('g')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
     const x = d3.scaleLinear()
-    .domain([0, 23])
-    .range([0, width - margin.right])
+      .domain([0, 23])
+      .range([0, width - margin.right])
 
     const y = d3.scaleLinear()
-    .domain([0, 6])
-    .range([0, height - margin.bottom])
+      .domain([0, 6])
+      .range([0, height - margin.bottom])
 
     const xAxis = d3.axisBottom()
-    .scale(x)
-    .ticks(24)
-    .tickFormat((_, i) => xLabels[i])
+      .scale(x)
+      .ticks(24)
+      .tickFormat((_, i) => xLabels[i])
 
     const yAxis = d3.axisLeft()
-    .scale(y)
-    .ticks(7)
-    .tickFormat((_, i) => yLabels[i])
+      .scale(y)
+      .ticks(7)
+      .tickFormat((_, i) => yLabels[i])
 
     chart.append('g')
-    .attr('class', 'x axis')
-    .attr('transform', `translate(${xAxisOffset.left}, ${height - xAxisOffset.bottom})`)
-    .call(xAxis)
+      .attr('class', 'x axis')
+      .attr('transform', `translate(${xAxisOffset.left}, ${height - xAxisOffset.bottom})`)
+      .call(xAxis)
 
     chart.append('g')
-    .attr('class', 'y axis')
-    .call(yAxis)
+      .attr('class', 'y axis')
+      .call(yAxis)
 
     const rScale = d3.scaleSqrt()
-    .domain([0, maxCount])
-    .range([0, maxRadius])
+      .domain([0, maxCount])
+      .range([0, maxRadius])
 
     chart.selectAll('circle')
-    .data(data)
-    .enter()
-    .append('circle')
-    .attr('cx', d => x(d.hour) + xAxisOffset.left)
-    .attr('cy', d => y(d.day))
-    .attr('r', d => rScale(d.count))
-    .style('fill', '#333')
+      .data(data)
+      .enter()
+      .append('circle')
+      .attr('cx', d => x(d.hour) + xAxisOffset.left)
+      .attr('cy', d => y(d.day))
+      .attr('r', d => rScale(d.count))
+      .style('fill', '#333')
 
     this.setState({
       chart: elem.toReact()
