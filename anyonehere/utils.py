@@ -29,4 +29,4 @@ def offline_timedelta():
 
 
 def discard_old_timedelta():
-    return timedelta(days=60)
+    return timedelta(days=30)
